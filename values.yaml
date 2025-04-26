@@ -1,0 +1,133 @@
+# Default values for apache-airflow.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Set the Airflow environment
+airflow:
+  # -- The Airflow version to use
+  version: "2.9.2"
+
+  # -- Executor type for Airflow: Local, Sequential, Celery, Kubernetes
+  executor: KubernetesExecutor
+
+  # -- Base URL for Airflow UI
+  baseUrl: http://localhost:8080
+
+  # -- Enable DAGs persistence using a Persistent Volume Claim
+  dags:
+    persistence:
+      enabled: true
+      size: 10Gi
+      accessMode: ReadWriteOnce
+      # storageClassName: "" # Optional: specify a storage class
+
+  # -- Enable logs persistence using a Persistent Volume Claim
+  logs:
+    persistence:
+      enabled: true
+      size: 20Gi
+      accessMode: ReadWriteOnce
+      # storageClassName: "" # Optional: specify a storage class
+
+  # -- Configuration for the Airflow Webserver
+  webserver:
+    replicas: 1
+    service:
+      type: LoadBalancer # Use ClusterIP for internal access within Colima
+      port: 8080
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 2Gi
+
+  # -- Configuration for the Airflow Scheduler
+  scheduler:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 2Gi
+
+  # -- Configuration for the Airflow Workers (only relevant for CeleryExecutor)
+  workers:
+    replicas: 2
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 2Gi
+
+  # -- Kubernetes specific configuration
+  kubernetes:
+    namespace: airflow
+    podOverride: {}
+    workerPodTemplate: {}
+
+# -- Configuration for the PostgreSQL database (for metadata)
+postgresql:
+  enabled: true # Set to false if you have an external PostgreSQL
+  auth:
+    username: airflow
+    password: airflow
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# -- Configuration for the Redis cache (for CeleryExecutor and potentially others)
+redis:
+  enabled: false # Set to true if you are using CeleryExecutor or need Redis explicitly
+  master:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+# -- Configuration for RBAC (Role-Based Access Control)
+rbac:
+  enabled: true
+  create: true
+
+# -- Configuration for DAGs folder (can be a Git repository)
+dagsGit:
+  enabled: false
+  repo: "https://github.com/apache/airflow-providers-apache-spark.git" # Example
+  branch: "main"
+  subPath: "example_dags"
+  # credentialsSecretName: "" # Optional: Secret containing SSH credentials
+
+# -- Configuration for Plugins folder (can be a Git repository)
+pluginsGit:
+  enabled: false
+  repo: ""
+  branch: "main"
+  subPath: ""
+  # credentialsSecretName: "" # Optional: Secret containing SSH credentials
+
+# -- Configuration for Secrets backend
+secrets:
+  backend: {} # Example:
+             # kubernetes: {}
+
+# -- Resources for the Helm chart release itself
+resources: {}
+
+# -- Additional labels to apply to all deployed resources
+labels: {}
+
+# -- Annotations to apply to all deployed resources
+annotations: {}
