@@ -1532,7 +1532,7 @@ webserver:
   webserverConfigConfigMapName: ~
 
   service:
-    type: NordPort
+    type: NodePort
     ## service annotations
     annotations: {}
     ports:
