@@ -2771,7 +2771,7 @@ dags:
     # ssh example: git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
     repo: https://github.com/AJ-93/web_log_analysis_pipeline.git
-    branch: main
+    branch: dev
     rev: HEAD
     # The git revision (branch, tag, or hash) to check out, v4 only
     ref: v2-2-stable
