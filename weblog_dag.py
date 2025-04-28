@@ -1,7 +1,6 @@
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.bash import BashOperator
 from datetime import datetime, timedelta
-import subprocess
 
 # Define default arguments
 default_args = {
@@ -21,11 +20,9 @@ dag = DAG(
     catchup=False
 )
 
-def run_spark_program():
-    subprocess.run(['spark-submit', 'main_etl.py'], check=True)
 
-etl_task = PythonOperator(
+etl_task = BashOperator(
     task_id='run_log_analysis',
-    python_callable=run_spark_program,
-    dag=dag
+    bash_command='./spark_job_submit.sh',  # Path to your .sh script
+    dag=dag,
 )
